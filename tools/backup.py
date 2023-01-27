@@ -1,4 +1,4 @@
-#!/bin/env python
+#!./venv/bin/python
 from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
 import uuid
@@ -15,7 +15,6 @@ s3 = boto3.resource(
     aws_secret_access_key=config["BACKUP_SECRET_KEY"],
     aws_session_token=None,
     config=boto3.session.Config(signature_version="s3v4"),
-    # verify=False,
 )
 
 
@@ -50,8 +49,7 @@ def main():
         with log_file.open("rb") as fp:
             s3.Bucket(config["BACKUP_BUCKET"]).put_object(Key=name, Body=fp)
         print("  Deleting local file...")
-        # log_file.unlink()
-        print("  Done!")
+        log_file.unlink()
 
 
 if __name__ == "__main__":
