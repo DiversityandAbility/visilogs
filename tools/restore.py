@@ -1,7 +1,6 @@
 #!./venv/bin/python
-import uuid
 import sys
-from datetime import date, datetime, timedelta, timezone
+from datetime import date, timedelta
 from pathlib import Path
 
 import boto3
@@ -19,30 +18,6 @@ s3 = boto3.resource(
 )
 
 
-def find_old_log_files():
-    cutoff = config.get("BACKUP_ARCHIVE_AFTER", 7)
-    cutoff = date.today() - timedelta(days=int(cutoff))
-    for p in Path("./logs/fresh").iterdir():
-        if p.is_file() and ".log" in p.name:
-            mtime = p.stat().st_mtime
-            mtime = datetime.fromtimestamp(mtime, tz=timezone.utc)
-            mtime = mtime.date()
-            if mtime <= cutoff:
-                yield p, mtime
-
-
-def rename(log_file, m_time):
-    name = log_file.name.split(".")
-    return ".".join(
-        [
-            str(m_time),
-            name[0],
-            str(uuid.uuid4()),
-            "log",
-        ]
-    )
-
-
 def main(cutoff, *search_args):
     search_args = [a.lower() for a in search_args]
     b = s3.Bucket(config["BACKUP_BUCKET"])
@@ -54,7 +29,7 @@ def main(cutoff, *search_args):
             key = obj.key.lower()
             if all(a in key for a in search_args):
                 print(f"  Found {obj.key}")
-                p = Path("logs") / "archive" / obj.key
+                p = Path(config["LOGS_DIR"]) / "archive" / obj.key
                 print(f"    Downloading to {p}")
                 with p.open("wb") as fp:
                     b.download_fileobj(obj.key, fp)

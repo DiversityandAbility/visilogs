@@ -1,7 +1,9 @@
 #!/bin/sh
 set -eu
 
-mkdir -p ./logs/fresh ./logs/archive
+set -a; . ./.env; set +a
+
+mkdir -p "$LOGS_DIR/fresh" "$LOGS_DIR/archive"
 
 python3 -m venv venv
 

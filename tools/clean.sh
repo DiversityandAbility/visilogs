@@ -1,4 +1,6 @@
 #!/bin/sh
 set -eu
 
-rm ./logs/archive/*
+set -a; . ./.env; set +a
+
+rm "$LOGS_DIR"/archive/*

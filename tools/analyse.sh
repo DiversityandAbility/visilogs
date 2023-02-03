@@ -1,4 +1,6 @@
 #!/bin/sh
 set -eu
 
-cat ./logs/*/*.log* | ./venv/bin/vd --filetype=jsonl --quitguard
+set -a; . ./.env; set +a
+
+cat "$LOGS_DIR"/*/*.log* | ./venv/bin/vd --filetype=jsonl --quitguard

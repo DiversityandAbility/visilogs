@@ -21,7 +21,8 @@ s3 = boto3.resource(
 def find_old_log_files():
     cutoff = config.get("BACKUP_ARCHIVE_AFTER", 7)
     cutoff = date.today() - timedelta(days=int(cutoff))
-    for p in Path("./logs/fresh").iterdir():
+    fresh_logs = Path(config["LOGS_DIR"]) / "fresh"
+    for p in fresh_logs.iterdir():
         if p.is_file() and ".log" in p.name:
             mtime = p.stat().st_mtime
             mtime = datetime.fromtimestamp(mtime, tz=timezone.utc)
