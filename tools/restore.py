@@ -39,4 +39,4 @@ if __name__ == "__main__":
     cutoff = 7
     if len(sys.argv) > 1:
         cutoff = int(sys.argv[1])
-    main(cutoff, sys.argv[2:])
+    main(cutoff, *sys.argv[2:])
